@@ -1,0 +1,462 @@
+# API KEY
+apiVersion: passport/v1
+kind: ApiKey
+metadata:
+  name: dating-asset-api-key
+spec:
+  name: Secret Api Key dating asset
+  policies:
+    - BucketFullAccess
+---
+# BUCKET - Interests
+apiVersion: bucket/v1
+kind: Schema
+metadata:
+  name: interests-2
+spec:
+  title: Interests
+  description: Describe your new bucket
+  icon: extension
+  primary: interest
+  readOnly: false
+  history: false
+  properties:
+    interest:
+      type: string
+      description: Description of the interest input
+      options:
+        position: bottom
+  acl:
+    write: true==true
+    read: true==true
+  order: 1
+---
+# BUCKET - User
+apiVersion: bucket/v1
+kind: Schema
+metadata:
+  name: user-1
+spec:
+  title: User
+  description: Describe your new bucket
+  icon: account_circle
+  primary: name
+  readOnly: false
+  history: false
+  properties:
+    identity_id:
+      type: string
+      description: Description of the identity_id input
+      options:
+        position: left
+    name:
+      type: string
+      description: Description of the name input
+      options:
+        position: left
+        translate: false
+    surname:
+      type: string
+      description: Description of the surname input
+      options:
+        position: left
+    email:
+      type: string
+      description: Description of the email input
+      options:
+        position: left
+        unique: true
+    username:
+      type: string
+      description: Description of the username input
+      options:
+        position: left
+        unique: true
+    phone:
+      type: string
+      description: Description of the phone input
+      options:
+        position: right
+    city:
+      type: string
+      description: Description of the city input
+      options:
+        position: right
+    country:
+      type: string
+      description: Description of the country input
+      options:
+        position: right
+    gender:
+      type: string
+      description: Description of the gender input
+      options:
+        position: right
+      enum:
+        - male
+        - female
+        - other
+    school:
+      type: string
+      description: Description of the school input
+      options:
+        position: bottom
+    description:
+      type: textarea
+      description: Description of the description input
+      options:
+        position: right
+    birthday:
+      type: date
+      description: Description of the birthday input
+      options:
+        position: bottom
+    profile_photo:
+      type: storage
+      description: Description of the profile_photo input
+      options:
+        position: bottom
+    gallery:
+      type: array
+      description: Description of the gallery input
+      options:
+        position: bottom
+      items:
+        title: photos
+        type: storage
+    created_at:
+      type: date
+      description: Description of the created_at input
+      options:
+        position: bottom
+      default: :created_at
+    updated_at:
+      type: date
+      description: Description of the updated_at input
+      options:
+        position: bottom
+      default: :updated_at
+    location:
+      type: location
+      description: Description of the location input
+      options:
+        position: bottom
+      locationType: Point
+    preferred_match_gender:
+      type: string
+      description: Description of the preferred_match_gender input
+      options:
+        position: bottom
+      enum:
+        - male
+        - female
+        - others
+        - all
+    job:
+      type: string
+      description: Description of the job input
+      options:
+        position: bottom
+    max_distance:
+      type: string
+      description: Max distance or max diameter of search area
+      options:
+        position: bottom
+    age_range_start:
+      type: number
+      description: Match age ranging minimum
+      options:
+        position: bottom
+      minimum: 18
+    age_range_end:
+      type: number
+      description: Match age ranging maximum
+      options:
+        position: bottom
+      minimum: 18
+      maximum: 100
+    visible:
+      type: boolean
+      description: This user will be visible or not
+      options:
+        position: bottom
+      default: false
+    interests:
+      type: relation
+      description: Users interests
+      options:
+        position: bottom
+      relationType: onetoone
+      dependent: false
+      bucket:
+        resourceFieldRef:
+          schemaName: interests-2
+  acl:
+    write: true==true
+    read: true==true
+  order: 0
+---
+# BUCKET - Likes
+apiVersion: bucket/v1
+kind: Schema
+metadata:
+  name: likes-3
+spec:
+  title: Likes
+  description: Describe your new bucket
+  icon: thumb_up
+  primary: like_type
+  readOnly: false
+  history: false
+  properties:
+    user:
+      type: relation
+      description: Description of the user input
+      options:
+        position: bottom
+      relationType: onetoone
+      dependent: false
+      primary: name
+      bucket:
+        resourceFieldRef:
+          schemaName: user-1
+    liked_user:
+      type: relation
+      description: Description of the liked_user input
+      options:
+        position: bottom
+      relationType: onetoone
+      dependent: false
+      primary: name
+      bucket:
+        resourceFieldRef:
+          schemaName: user-1
+    like_type:
+      type: string
+      description: Description of the like_type input
+      options:
+        position: bottom
+      enum:
+        - like
+        - superlike
+      default: like
+    created_at:
+      type: date
+      description: Description of the created_at input
+      options:
+        position: bottom
+      default: :created_at
+    matched:
+      type: boolean
+      description: AUTO FILL - If the user has matched with this like or not
+      options:
+        position: bottom
+      default: false
+  acl:
+    write: true==true
+    read: true==true
+  order: 2
+---
+# BUCKET - Unlikes
+apiVersion: bucket/v1
+kind: Schema
+metadata:
+  name: unlikes-4
+spec:
+  title: Unlikes
+  description: Describe your new bucket
+  icon: thumb_down
+  primary: primary
+  readOnly: false
+  history: false
+  properties:
+    user:
+      type: relation
+      description: Description of the user input
+      options:
+        position: bottom
+      relationType: onetoone
+      dependent: false
+      bucket:
+        resourceFieldRef:
+          schemaName: user-1
+    unliked_user:
+      type: relation
+      description: Description of the unliked_user input
+      options:
+        position: bottom
+      relationType: onetoone
+      dependent: false
+      bucket:
+        resourceFieldRef:
+          schemaName: user-1
+    created_at:
+      type: date
+      description: Description of the created_at input
+      options:
+        position: bottom
+      default: :created_at
+    primary:
+      type: string
+      description: This field is just for preventing primary key error
+      options:
+        position: bottom
+  acl:
+    write: true==true
+    read: true==true
+  order: 3
+---
+# BUCKET - Match
+apiVersion: bucket/v1
+kind: Schema
+metadata:
+  name: match-5
+spec:
+  title: Match
+  description: Describe your new bucket
+  icon: device_hub
+  primary: user1_like_type
+  readOnly: false
+  history: false
+  properties:
+    user1:
+      type: relation
+      description: Description of the user1 input
+      options:
+        position: bottom
+      relationType: onetoone
+      dependent: false
+      bucket:
+        resourceFieldRef:
+          schemaName: user-1
+    user2:
+      type: relation
+      description: Description of the user2 input
+      options:
+        position: bottom
+      relationType: onetoone
+      dependent: false
+      bucket:
+        resourceFieldRef:
+          schemaName: user-1
+    user1_like_type:
+      type: string
+      description: Description of the user1_like_type input
+      options:
+        position: bottom
+      enum:
+        - like
+        - superlike
+    user2_like_type:
+      type: string
+      description: Description of the user2_like_type input
+      options:
+        position: bottom
+      enum:
+        - like
+        - superlike
+    created_at:
+      type: date
+      description: Description of the created_at input
+      options:
+        position: bottom
+      default: :created_at
+  acl:
+    write: true==true
+    read: true==true
+  order: 4
+---
+# FUNCTION -  Match detector
+apiVersion: function/v1
+kind: Function
+metadata:
+  name: match-detector-1
+spec:
+  description: Match detector from the likes
+  language: javascript
+  timeout: 10
+  environment:
+    - name: MATCH_BUCKET_ID
+      valueFrom:
+        resourceFieldRef:
+          schemaName: match-5
+    - name: API_KEY
+      valueFrom:
+        resourceFieldRef:
+          apiKeyName: dating-asset-api-key
+  dependency:
+    - name: "@spica-devkit/bucket"
+      version: ^0.9.7
+  title: Match detector
+  code: ./function/match-detector-1.js
+  runtime:
+    name: Node
+    language: Javascript
+---
+# FUNCTION -  Get suitable users
+apiVersion: function/v1
+kind: Function
+metadata:
+  name: get-suitable-users
+spec:
+  description: Getting suitable users with filtering liked and unliked users
+  language: javascript
+  timeout: 26
+  environment:
+    - name: USER_BUCKET_ID
+      valueFrom:
+        resourceFieldRef:
+          schemaName: user-1
+    - name: API_KEY
+      valueFrom:
+        resourceFieldRef:
+          apiKeyName: dating-asset-api-key
+    - name: LIKES_BUCKET_ID
+      valueFrom:
+        resourceFieldRef:
+          schemaName: likes-3
+    - name: UNLIKES_BUCKET_ID
+      valueFrom:
+        resourceFieldRef:
+          schemaName: unlikes-4
+  dependency:
+    - name: "@spica-devkit/bucket"
+      version: ^0.9.7
+  title: Get suitable users
+  code: ./function/get-suitable-users-2.js
+  runtime:
+    name: Node
+    language: Javascript
+---
+# TRIGGER - matchDetector
+apiVersion: function/v1
+kind: Trigger
+metadata:
+  name: matchDetector
+spec:
+  type: bucket
+  active: true
+  name: matchDetector
+  func: match-detector-1
+  bucketOptions:
+    bucket:
+      resourceFieldRef:
+        schemaName: likes-3
+    type: INSERT
+---
+# TRIGGER - getUsers
+apiVersion: function/v1
+kind: Trigger
+metadata:
+  name: getUsers
+spec:
+  type: http
+  active: true
+  batch:
+    deadline: 25
+    limit: 9007199254740991
+  name: getUsers
+  func: get-suitable-users
+  httpOptions:
+    method: Get
+    path: /getUsers
